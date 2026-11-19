@@ -1,0 +1,622 @@
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HYBRIDOPS | Cloud Connectivity Intelligence</title>
+
+<style>
+:root {
+  --bg:#080e19;
+  --sidebar:#0b1422;
+  --panel:#101d2e;
+  --panel2:#14243a;
+  --border:#22354c;
+  --text:#eaf2fc;
+  --muted:#859ab2;
+  --cyan:#35c9e8;
+  --green:#32d6a0;
+  --red:#fa6579;
+  --amber:#f2b957;
+}
+*{box-sizing:border-box}
+body{
+ margin:0;background:var(--bg);color:var(--text);
+ font-family:Inter,"Segoe UI",Arial,sans-serif;font-size:13px
+}
+button,input{font:inherit}
+button{cursor:pointer}
+.app{display:flex;min-height:100vh}
+.sidebar{
+ width:245px;flex-shrink:0;background:var(--sidebar);
+ border-right:1px solid var(--border);padding:22px 15px;
+ display:flex;flex-direction:column
+}
+.brand{display:flex;gap:11px;align-items:center;padding:5px 7px 27px}
+.brand-icon{
+ width:42px;height:42px;border-radius:12px;
+ background:linear-gradient(135deg,#16a9cc,#3157a5);
+ display:grid;place-items:center;font-size:22px;
+ box-shadow:0 5px 20px #159ec333
+}
+.brand h2{font-size:15px;letter-spacing:1.2px;margin:0}
+.brand small{font-size:9px;color:var(--muted);letter-spacing:1px}
+.nav-label{font-size:9px;color:#627992;letter-spacing:1.6px;padding:18px 10px 9px}
+.nav{
+ padding:12px;border-radius:8px;color:#91a5bd;
+ margin:3px 0;font-size:12px;display:flex;gap:12px;
+ align-items:center;cursor:pointer;transition:.2s
+}
+.nav:hover,.nav.active{background:#162b41;color:var(--cyan)}
+.nav.active{border-left:3px solid var(--cyan)}
+.nav-icon{font-size:16px;width:19px;text-align:center}
+.sidebar-bottom{margin-top:auto}
+.lab-card{
+ background:#11243a;border:1px solid var(--border);
+ border-radius:10px;padding:14px
+}
+.lab-card small{color:var(--muted);font-size:10px}
+.lab-card strong{display:block;margin:9px 0;font-size:12px}
+.dot{
+ display:inline-block;width:7px;height:7px;border-radius:50%;
+ background:var(--green);margin-right:6px
+}
+.main{flex:1;min-width:0;padding:24px 27px}
+.topbar{
+ display:flex;justify-content:space-between;align-items:center;
+ flex-wrap:wrap;gap:15px;padding-bottom:20px;
+ border-bottom:1px solid var(--border)
+}
+.heading h1{font-size:21px;margin:0 0 6px;letter-spacing:-.4px}
+.heading p{color:var(--muted);font-size:11px;margin:0}
+.actions{display:flex;align-items:center;gap:10px}
+.env{
+ color:var(--green);background:#12342d;border:1px solid #205744;
+ padding:8px 12px;border-radius:6px;font-size:10px
+}
+.clock{color:var(--muted);font-size:11px}
+.avatar{
+ width:35px;height:35px;border-radius:9px;
+ background:#254b70;display:grid;place-items:center;font-weight:700
+}
+.page{display:none}
+.page.active{display:block}
+.page-title{
+ display:flex;justify-content:space-between;align-items:center;
+ margin:23px 0 14px;gap:10px
+}
+.page-title h2{font-size:14px;margin:0}
+.page-title p{font-size:10px;color:var(--muted);margin:5px 0 0}
+.btn{
+ background:#15364d;border:1px solid #24607a;color:#7bdff0;
+ padding:9px 13px;border-radius:7px;font-size:11px
+}
+.btn.primary{background:#20b8d6;color:#071522;border:0;font-weight:700}
+.btn:hover{filter:brightness(1.2)}
+.grid4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.card{
+ background:var(--panel);border:1px solid var(--border);
+ border-radius:10px;padding:16px;min-width:0
+}
+.kpi-top{display:flex;justify-content:space-between;align-items:center}
+.kpi-label{font-size:10px;color:var(--muted)}
+.kpi-icon{
+ width:32px;height:32px;border-radius:8px;
+ background:#183148;color:var(--cyan);
+ display:grid;place-items:center;font-size:16px
+}
+.kpi-value{font-size:25px;font-weight:700;margin:12px 0 6px}
+.kpi-foot{font-size:10px;color:var(--muted)}
+.good{color:var(--green)}.bad{color:var(--red)}
+.cyan{color:var(--cyan)}.amber{color:var(--amber)}
+.section{margin-top:19px}
+.section-head{
+ display:flex;justify-content:space-between;align-items:center;
+ margin-bottom:11px;gap:10px
+}
+.section-head h3{font-size:13px;margin:0}
+.muted{color:var(--muted)}
+.small{font-size:10px}
+.tag{
+ padding:5px 8px;border-radius:5px;background:#17372f;
+ color:var(--green);font-size:9px;white-space:nowrap
+}
+.tag.warn{background:#392e1e;color:var(--amber)}
+.tag.off{background:#40232c;color:var(--red)}
+/* topology */
+.topology{
+ display:grid;grid-template-columns:repeat(5,minmax(0,1fr));
+ align-items:center;gap:10px
+}
+.node{
+ background:#12243a;border:1px solid #29435c;
+ border-radius:9px;padding:16px 7px;text-align:center;
+ position:relative;min-width:0
+}
+.node:not(:last-child):after{
+ content:"➜";position:absolute;right:-14px;top:40%;
+ color:var(--cyan);z-index:2;font-size:17px
+}
+.node-icon{font-size:23px;margin-bottom:10px;color:var(--cyan)}
+.node strong{display:block;font-size:10px;margin-bottom:6px}
+.node small{font-size:9px;color:var(--muted)}
+.node-status{font-size:9px;color:var(--green);margin-top:10px}
+.node.failed{border-color:#9a4555}
+.node.failed .node-status{color:var(--red)}
+/* diagnostics */
+.diagnostic{
+ display:grid;grid-template-columns:1.2fr .8fr;gap:14px
+}
+.console{
+ background:#091522;border:1px solid #243a52;
+ border-radius:8px;padding:14px;font-family:Consolas,monospace;
+ font-size:11px;min-height:135px;line-height:2
+}
+.console .prompt{color:var(--green)}
+.console .info{color:var(--cyan)}
+.console .error{color:var(--red)}
+.control-panel{
+ display:flex;flex-direction:column;align-items:center;
+ justify-content:center;gap:13px;text-align:center
+}
+.led{
+ width:55px;height:55px;border-radius:50%;
+ background:#34404e;border:5px solid #536171;
+ box-shadow:inset 0 0 13px #000
+}
+.led.on{background:#24e29c;box-shadow:0 0 12px #24e29c,0 0 30px #24e29988}
+.led.off{background:#fa536c;box-shadow:0 0 12px #fa536c,0 0 30px #fa536c88}
+.control-panel strong{font-size:12px}
+.control-panel small{color:var(--muted);font-size:10px}
+/* chart */
+.chart-wrap{height:190px;position:relative}
+canvas{width:100%;height:100%}
+.chart-legend{display:flex;gap:15px;font-size:10px;color:var(--muted)}
+.legend-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:5px}
+/* services */
+.service{
+ display:flex;justify-content:space-between;align-items:center;
+ padding:13px 0;border-bottom:1px solid var(--border);gap:10px
+}
+.service:last-child{border:0}
+.service-left{display:flex;gap:11px;align-items:center}
+.service-icon{
+ width:34px;height:34px;border-radius:8px;
+ display:grid;place-items:center;background:#19334b;color:var(--cyan)
+}
+.service strong{display:block;font-size:11px}
+.service small{color:var(--muted);font-size:9px}
+/* table */
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:540px}
+th,td{
+ padding:12px 10px;text-align:left;
+ border-bottom:1px solid var(--border);font-size:10px
+}
+th{color:#7189a4;font-weight:500}
+td{color:#d9e5f3}
+.empty{text-align:center;padding:25px;color:var(--muted)}
+/* device */
+.device-layout{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.detail{
+ display:flex;justify-content:space-between;gap:10px;
+ padding:13px 0;border-bottom:1px solid var(--border)
+}
+.detail:last-child{border:0}
+.detail span{color:var(--muted);font-size:11px}
+.detail strong{font-size:11px}
+/* responsive */
+.footer{text-align:center;padding:25px;color:#647b94;font-size:9px}
+@media(max-width:1100px){
+ .grid4{grid-template-columns:repeat(2,1fr)}
+ .topology{grid-template-columns:repeat(3,1fr)}
+ .node:after{display:none}
+}
+@media(max-width:760px){
+ .sidebar{width:62px;padding:15px 7px}
+ .brand{padding:5px 2px 25px}
+ .brand>div:last-child,.nav-label,.nav:not(.active){display:none}
+ .nav{justify-content:center;padding:13px 5px}
+ .nav-icon{font-size:19px}
+ .lab-card{display:none}
+ .main{padding:17px 12px}
+ .diagnostic,.device-layout{grid-template-columns:1fr}
+ .topology{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:440px){
+ .grid4,.grid2{grid-template-columns:1fr}
+ .topology{grid-template-columns:1fr}
+ .heading h1{font-size:17px}
+}
+</style>
+</head>
+
+<body>
+<div class="app">
+
+<aside class="sidebar">
+ <div class="brand">
+  <div class="brand-icon">⌘</div>
+  <div><h2>HYBRIDOPS</h2><small>CLOUD INTELLIGENCE</small></div>
+ </div>
+
+ <div class="nav-label">WORKSPACE</div>
+ <div class="nav active" data-page="overview"><span class="nav-icon">▦</span>Overview</div>
+ <div class="nav" data-page="network"><span class="nav-icon">⌘</span>Network topology</div>
+ <div class="nav" data-page="devices"><span class="nav-icon">▣</span>Device monitoring</div>
+ <div class="nav" data-page="diagnostics"><span class="nav-icon">⌁</span>Diagnostics</div>
+
+ <div class="nav-label">OPERATIONS</div>
+ <div class="nav" data-page="aws"><span class="nav-icon">☁</span>AWS infrastructure</div>
+ <div class="nav" data-page="logs"><span class="nav-icon">▤</span>Audit logs</div>
+
+ <div class="sidebar-bottom">
+  <div class="lab-card">
+   <small>ENVIRONMENT STATUS</small>
+   <strong><span class="dot"></span>Monitoring active</strong>
+   <small>ESP32-HC-001</small>
+   <br><br>
+   <small>Build 1.0.0 · Demo environment</small>
+  </div>
+ </div>
+</aside>
+
+<main class="main">
+
+<header class="topbar">
+ <div class="heading">
+  <h1 id="pageHeading">Infrastructure Overview</h1>
+  <p>Hybrid cloud connectivity intelligence and operations center</p>
+ </div>
+ <div class="actions">
+  <span class="env">● DEMO ENVIRONMENT</span>
+  <span class="clock" id="clock">--:--:--</span>
+  <div class="avatar">HC</div>
+ </div>
+</header>
+
+<!-- OVERVIEW -->
+<section class="page active" id="overview">
+ <div class="page-title">
+  <div><h2>System performance</h2><p>Infrastructure health at a glance</p></div>
+  <button class="btn" onclick="refreshUI()">↻ Refresh view</button>
+ </div>
+
+ <div class="grid4">
+  <div class="card">
+   <div class="kpi-top"><span class="kpi-label">NETWORK AVAILABILITY</span><span class="kpi-icon">⌁</span></div>
+   <div class="kpi-value good" id="uptime">99.9%</div>
+   <div class="kpi-foot">Demo availability indicator</div>
+  </div>
+  <div class="card">
+   <div class="kpi-top"><span class="kpi-label">SUCCESSFUL TESTS</span><span class="kpi-icon">✓</span></div>
+   <div class="kpi-value" id="success">0</div>
+   <div class="kpi-foot">Current session</div>
+  </div>
+  <div class="card">
+   <div class="kpi-top"><span class="kpi-label">AVERAGE LATENCY</span><span class="kpi-icon">◷</span></div>
+   <div class="kpi-value cyan" id="latency">-- ms</div>
+   <div class="kpi-foot">Latest successful test</div>
+  </div>
+  <div class="card">
+   <div class="kpi-top"><span class="kpi-label">TOTAL TESTS</span><span class="kpi-icon">▤</span></div>
+   <div class="kpi-value" id="total">0</div>
+   <div class="kpi-foot">Connectivity test executions</div>
+  </div>
+ </div>
+
+ <div class="section">
+  <div class="section-head"><h3>Hybrid infrastructure topology</h3><span class="tag">LOGICAL VIEW</span></div>
+  <div class="card topology" id="topology">
+   <div class="node" id="n1"><div class="node-icon">▣</div><strong>ESP32 DEVICE</strong><small>Hardware controller</small><div class="node-status">● ONLINE</div></div>
+   <div class="node" id="n2"><div class="node-icon">☁</div><strong>AWS IoT CORE</strong><small>MQTT messaging</small><div class="node-status">● CONFIGURED</div></div>
+   <div class="node" id="n3"><div class="node-icon">▦</div><strong>AWS VPC</strong><small>Private network</small><div class="node-status">● CONFIGURED</div></div>
+   <div class="node" id="n4"><div class="node-icon">⇄</div><strong>VPN GATEWAY</strong><small>Hybrid connection</small><div class="node-status">● SIMULATED</div></div>
+   <div class="node" id="n5"><div class="node-icon">▤</div><strong>ON-PREM SERVER</strong><small>Test endpoint</small><div class="node-status">● READY</div></div>
+  </div>
+ </div>
+
+ <div class="section diagnostic">
+  <div class="card">
+   <div class="section-head"><h3>Connectivity diagnostics console</h3><span class="muted small">TEST ENGINE</span></div>
+   <div class="console" id="console">
+    <div class="prompt">HYBRIDOPS / CONNECTIVITY ENGINE</div>
+    <div class="info">System initialized successfully.</div>
+    <div>Waiting for connectivity request...</div>
+   </div>
+   <div style="display:flex;gap:9px;flex-wrap:wrap;margin-top:13px">
+    <button class="btn primary" id="runBtn" onclick="runTest()">▶ Run connectivity test</button>
+    <button class="btn" onclick="clearConsole()">Clear console</button>
+   </div>
+  </div>
+
+  <div class="card control-panel">
+   <div class="kpi-label">HARDWARE LED INDICATOR</div>
+   <div class="led" id="led"></div>
+   <strong id="ledTitle">STANDBY</strong>
+   <small id="ledText">Awaiting test result</small>
+   <span class="tag" id="ledTag">INITIALIZED</span>
+  </div>
+ </div>
+
+ <div class="section grid2">
+  <div class="card">
+   <div class="section-head"><h3>Latency analytics</h3><span class="muted small">RECENT TESTS</span></div>
+   <div class="chart-wrap"><canvas id="chart"></canvas></div>
+   <div class="chart-legend"><span><i class="legend-dot" style="background:#35c9e8"></i>Response time (ms)</span></div>
+  </div>
+
+  <div class="card">
+   <div class="section-head"><h3>AWS service overview</h3><span class="muted small">CONFIGURATION</span></div>
+   <div class="service"><div class="service-left"><div class="service-icon">☁</div><div><strong>AWS IoT Core</strong><small>MQTT messaging service</small></div></div><span class="tag warn">DEMO</span></div>
+   <div class="service"><div class="service-left"><div class="service-icon">▦</div><div><strong>Amazon VPC</strong><small>Private cloud network</small></div></div><span class="tag warn">DEMO</span></div>
+   <div class="service"><div class="service-left"><div class="service-icon">⇄</div><div><strong>VPN Gateway</strong><small>Hybrid connectivity</small></div></div><span class="tag warn">DEMO</span></div>
+   <div class="service"><div class="service-left"><div class="service-icon">▣</div><div><strong>ESP32 Controller</strong><small>Device communication</small></div></div><span class="tag">LOCAL</span></div>
+  </div>
+ </div>
+
+ <div class="section card">
+  <div class="section-head"><h3>Latest operational events</h3><span class="muted small">LIVE SESSION LOG</span></div>
+  <div class="table-wrap">
+   <table><thead><tr><th>EVENT ID</th><th>TIMESTAMP</th><th>EVENT</th><th>RESULT</th><th>RESPONSE</th></tr></thead>
+   <tbody id="overviewLogs"><tr><td colspan="5" class="empty">No events recorded yet.</td></tr></tbody></table>
+  </div>
+ </div>
+</section>
+
+<!-- NETWORK -->
+<section class="page" id="network">
+ <div class="page-title"><div><h2>Network topology</h2><p>Hybrid cloud communication architecture</p></div></div>
+ <div class="card">
+  <div class="section-head"><h3>Logical network architecture</h3><span class="tag">PROJECT DESIGN</span></div>
+  <div class="topology">
+   <div class="node"><div class="node-icon">▣</div><strong>ESP32</strong><small>Push button and LED</small><div class="node-status">● DEVICE</div></div>
+   <div class="node"><div class="node-icon">☁</div><strong>IoT Core</strong><small>MQTT endpoint</small><div class="node-status">● CLOUD</div></div>
+   <div class="node"><div class="node-icon">▦</div><strong>VPC</strong><small>Private subnet</small><div class="node-status">● NETWORK</div></div>
+   <div class="node"><div class="node-icon">⇄</div><strong>VPN Gateway</strong><small>Site-to-site VPN</small><div class="node-status">● TUNNEL</div></div>
+   <div class="node"><div class="node-icon">▤</div><strong>On-Premises</strong><small>Private endpoint</small><div class="node-status">● SERVER</div></div>
+  </div>
+ </div>
+ <div class="section grid2">
+  <div class="card"><h3>Communication protocol</h3><p class="muted">MQTT over TLS for device messaging, with a backend API for dashboard updates.</p><span class="tag">MQTT / TLS</span></div>
+  <div class="card"><h3>Network security</h3><p class="muted">Certificate-based IoT authentication and controlled private network access.</p><span class="tag">SECURITY DESIGN</span></div>
+ </div>
+</section>
+
+<!-- DEVICES -->
+<section class="page" id="devices">
+ <div class="page-title"><div><h2>Device monitoring</h2><p>ESP32 hardware and telemetry information</p></div></div>
+ <div class="device-layout">
+  <div class="card">
+   <div class="section-head"><h3>ESP32-HC-001</h3><span class="tag">DEMO ONLINE</span></div>
+   <div class="detail"><span>Device type</span><strong>ESP32 Controller</strong></div>
+   <div class="detail"><span>Physical input</span><strong>Push Button</strong></div>
+   <div class="detail"><span>Output indicator</span><strong>LED</strong></div>
+   <div class="detail"><span>Cloud service</span><strong>AWS IoT Core</strong></div>
+   <div class="detail"><span>Communication</span><strong>MQTT / TLS</strong></div>
+   <div class="detail"><span>Device ID</span><strong>ESP32-HC-001</strong></div>
+  </div>
+  <div class="card control-panel">
+   <div class="kpi-label">DEVICE LED STATUS</div>
+   <div class="led" id="deviceLed"></div>
+   <strong id="deviceLedTitle">STANDBY</strong>
+   <small>LED output simulation</small>
+  </div>
+ </div>
+</section>
+
+<!-- DIAGNOSTICS -->
+<section class="page" id="diagnostics">
+ <div class="page-title"><div><h2>Connectivity diagnostics</h2><p>Endpoint verification and response analysis</p></div><button class="btn primary" onclick="runTest()">▶ Execute test</button></div>
+ <div class="card">
+  <div class="detail"><span>Target endpoint</span><strong>192.168.1.100 (example)</strong></div>
+  <div class="detail"><span>Protocol</span><strong>ICMP / Backend test</strong></div>
+  <div class="detail"><span>Network route</span><strong>Hybrid cloud logical path</strong></div>
+  <div class="detail"><span>Last result</span><strong id="diagResult">Not tested</strong></div>
+  <div class="detail"><span>Last response</span><strong id="diagLatency">--</strong></div>
+ </div>
+ <div class="section card"><h3>Diagnostic output</h3><div class="console" id="diagConsole">Awaiting diagnostic execution...</div></div>
+</section>
+
+<!-- AWS -->
+<section class="page" id="aws">
+ <div class="page-title"><div><h2>AWS infrastructure</h2><p>Cloud resource configuration overview</p></div></div>
+ <div class="grid2">
+  <div class="card"><div class="service"><div class="service-left"><div class="service-icon">☁</div><strong>AWS IoT Core</strong></div><span class="tag warn">NOT CONNECTED</span></div><p class="muted">Device messaging and MQTT communication.</p></div>
+  <div class="card"><div class="service"><div class="service-left"><div class="service-icon">▦</div><strong>Amazon VPC</strong></div><span class="tag warn">NOT VERIFIED</span></div><p class="muted">Private cloud networking resources.</p></div>
+  <div class="card"><div class="service"><div class="service-left"><div class="service-icon">⇄</div><strong>VPN Gateway</strong></div><span class="tag warn">NOT VERIFIED</span></div><p class="muted">Site-to-site hybrid connection.</p></div>
+  <div class="card"><div class="service"><div class="service-left"><div class="service-icon">▣</div><strong>ESP32 Thing</strong></div><span class="tag warn">SIMULATED</span></div><p class="muted">IoT device identity and connection.</p></div>
+ </div>
+ <div class="section card"><h3>Integration status</h3><p class="muted">This standalone dashboard is not yet authenticated to AWS. Connect the backend, AWS IoT Core and device before displaying actual resource health.</p></div>
+</section>
+
+<!-- LOGS -->
+<section class="page" id="logs">
+ <div class="page-title"><div><h2>Audit and event logs</h2><p>Connectivity execution records</p></div><button class="btn" onclick="exportLogs()">↓ Export CSV</button></div>
+ <div class="card table-wrap"><table><thead><tr><th>EVENT ID</th><th>TIMESTAMP</th><th>ENDPOINT</th><th>RESPONSE</th><th>STATUS</th></tr></thead><tbody id="allLogs"><tr><td colspan="5" class="empty">No events recorded.</td></tr></tbody></table></div>
+</section>
+
+<div class="footer">HYBRIDOPS CLOUD INTELLIGENCE PLATFORM · VERSION 1.0.0<br>Hybrid Cloud Connectivity Tester | Academic Project</div>
+
+</main>
+</div>
+
+<script>
+let total=0,success=0,latestLatency=null,records=[],latencies=[];
+let testing=false;
+
+function clock(){
+ document.getElementById("clock").textContent=new Date().toLocaleString();
+}
+setInterval(clock,1000);clock();
+
+// NAVIGATION
+document.querySelectorAll(".nav[data-page]").forEach(nav=>{
+ nav.addEventListener("click",()=>{
+  document.querySelectorAll(".nav").forEach(n=>n.classList.remove("active"));
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  nav.classList.add("active");
+  const page=nav.dataset.page;
+  document.getElementById(page).classList.add("active");
+  const titles={
+   overview:"Infrastructure Overview",
+   network:"Network Topology",
+   devices:"Device Monitoring",
+   diagnostics:"Connectivity Diagnostics",
+   aws:"AWS Infrastructure",
+   logs:"Audit & Event Logs"
+  };
+  document.getElementById("pageHeading").textContent=titles[page];
+  if(page==="overview")drawChart();
+ });
+});
+
+function log(message,type="info"){
+ const consoleBox=document.getElementById("console");
+ const line=document.createElement("div");
+ line.className=type==="success"?"prompt":type==="error"?"error":"info";
+ line.textContent="["+new Date().toLocaleTimeString()+"] "+message;
+ consoleBox.appendChild(line);
+ while(consoleBox.children.length>12)consoleBox.removeChild(consoleBox.firstChild);
+ document.getElementById("diagConsole").textContent=consoleBox.innerText;
+}
+
+function clearConsole(){
+ document.getElementById("console").innerHTML="<div>Console cleared. Awaiting request...</div>";
+}
+
+function setLED(status){
+ ["led","deviceLed"].forEach(id=>{
+  const el=document.getElementById(id);
+  el.className="led "+(status==="success"?"on":status==="failure"?"off":"");
+ });
+ document.getElementById("ledTitle").textContent=status==="success"?"REACHABLE":status==="failure"?"UNREACHABLE":"STANDBY";
+ document.getElementById("deviceLedTitle").textContent=status==="success"?"GREEN - SUCCESS":status==="failure"?"RED - FAILURE":"STANDBY";
+ document.getElementById("ledText").textContent=status==="success"?"Endpoint response received":status==="failure"?"Endpoint did not respond":"Awaiting test result";
+ document.getElementById("ledTag").textContent=status.toUpperCase();
+}
+
+function updateTopology(ok){
+ for(let i=1;i<=5;i++){
+  const n=document.getElementById("n"+i);
+  if(n){
+   n.classList.toggle("failed",!ok);
+   const s=n.querySelector(".node-status");
+   if(s)s.textContent=ok?"● DEMO PASS":"● TEST FAILED";
+  }
+ }
+}
+
+async function runTest(){
+ if(testing)return;
+ testing=true;
+ const btn=document.getElementById("runBtn");
+ btn.disabled=true;btn.textContent="Testing...";
+ setLED("standby");
+ log("Connectivity verification initiated.");
+ log("Checking logical hybrid network path...");
+ await new Promise(r=>setTimeout(r,1300));
+
+ // Demo result only. Replace with real backend API later.
+ const ok=Math.random()<0.9;
+ const ms=ok?Math.floor(Math.random()*50)+12:null;
+ total++;
+ if(ok){success++;latestLatency=ms;latencies.push(ms);if(latencies.length>12)latencies.shift();}
+ setLED(ok?"success":"failure");
+ updateTopology(ok);
+
+ const rec={
+  id:"HC-"+String(1000+total),
+  time:new Date().toLocaleString(),
+  endpoint:"192.168.1.100",
+  latency:ms,
+  status:ok?"SUCCESS":"FAILED"
+ };
+ records.unshift(rec);
+
+ document.getElementById("total").textContent=total;
+ document.getElementById("success").textContent=success;
+ document.getElementById("latency").textContent=latestLatency===null?"-- ms":latestLatency+" ms";
+ document.getElementById("diagResult").textContent=rec.status;
+ document.getElementById("diagLatency").textContent=ms===null?"No response":ms+" ms";
+
+ log(ok?"Endpoint reachable. Response: "+ms+" ms":"Endpoint unreachable.",ok?"success":"error");
+ renderLogs();
+ drawChart();
+
+ btn.disabled=false;btn.textContent="▶ Run connectivity test";
+ testing=false;
+}
+
+function renderLogs(){
+ const rows=records.slice(0,10).map(r=>
+ `<tr><td>${r.id}</td><td>${r.time}</td><td>${r.endpoint}</td><td>${r.latency===null?"--":r.latency+" ms"}</td><td><span class="tag ${r.status==="FAILED"?"off":""}">${r.status}</span></td></tr>`
+ ).join("");
+ const empty='<tr><td colspan="5" class="empty">No events recorded.</td></tr>';
+ document.getElementById("allLogs").innerHTML=rows||empty;
+ document.getElementById("overviewLogs").innerHTML=rows||empty;
+}
+
+function drawChart(){
+ const canvas=document.getElementById("chart");
+ if(!canvas)return;
+ const ctx=canvas.getContext("2d");
+ const rect=canvas.getBoundingClientRect();
+ if(!rect.width)return;
+ const dpr=window.devicePixelRatio||1;
+ canvas.width=rect.width*dpr;canvas.height=rect.height*dpr;
+ ctx.scale(dpr,dpr);
+ const w=rect.width,h=rect.height;
+ ctx.clearRect(0,0,w,h);
+ ctx.strokeStyle="#26394e";ctx.lineWidth=1;
+ for(let i=0;i<5;i++){
+  let y=15+i*(h-35)/4;
+  ctx.beginPath();ctx.moveTo(30,y);ctx.lineTo(w-8,y);ctx.stroke();
+ }
+ const data=latencies.length?latencies:[22,34,27,39,25,31,19];
+ const max=Math.max(60,...data);
+ const points=data.map((v,i)=>({
+  x:35+i*(w-50)/Math.max(data.length-1,1),
+  y:15+(h-35)*(1-v/max)
+ }));
+ if(points.length>1){
+  ctx.beginPath();ctx.moveTo(points[0].x,points[0].y);
+  points.forEach(p=>ctx.lineTo(p.x,p.y));
+  ctx.strokeStyle="#35c9e8";ctx.lineWidth=2.5;ctx.stroke();
+  ctx.lineTo(points[points.length-1].x,h-15);
+  ctx.lineTo(points[0].x,h-15);ctx.closePath();
+  const grad=ctx.createLinearGradient(0,0,0,h);
+  grad.addColorStop(0,"#35c9e833");grad.addColorStop(1,"#35c9e800");
+  ctx.fillStyle=grad;ctx.fill();
+ }
+ points.forEach(p=>{
+  ctx.beginPath();ctx.arc(p.x,p.y,3,0,Math.PI*2);
+  ctx.fillStyle="#35c9e8";ctx.fill();
+ });
+}
+
+function refreshUI(){
+ drawChart();
+ log("Dashboard view refreshed.");
+}
+
+function exportLogs(){
+ if(!records.length){alert("No test records to export.");return;}
+ const csv=["ID,Timestamp,Endpoint,Latency,Status",
+ ...records.map(r=>[r.id,'"'+r.time+'"',r.endpoint,r.latency??"",r.status].join(","))].join("\n");
+ const blob=new Blob([csv],{type:"text/csv"});
+ const url=URL.createObjectURL(blob);
+ const a=document.createElement("a");
+ a.href=url;a.download="hybridops-audit-logs.csv";a.click();
+ URL.revokeObjectURL(url);
+}
+
+window.addEventListener("resize",drawChart);
+drawChart();
+</script>
+</body>
+</html>
